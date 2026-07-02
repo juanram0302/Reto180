@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0E1113">
+<title>RETO 180 — Transformación Total</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E1113; --surface:#171C1F; --surface2:#1F2529; --line:#2A3236;
+  --gold:#F5B93F; --gold-dim:#8a6a24; --green:#3FB950; --green-dim:#1d4a28;
+  --red:#E5534B; --blue:#58A6FF; --text:#E8EAED; --muted:#8B949E;
+  --radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:'Inter',system-ui,sans-serif; font-size:15px; line-height:1.5;
+  padding-bottom:84px; min-height:100vh;
+}
+.bebas{font-family:'Bebas Neue',sans-serif; letter-spacing:.04em}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ===== HEADER ===== */
+header{
+  padding:18px 18px 10px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; background:linear-gradient(var(--bg) 75%,transparent); z-index:40;
+}
+.logo{font-family:'Bebas Neue'; font-size:26px; letter-spacing:.06em}
+.logo em{color:var(--gold); font-style:normal}
+.streak-pill{
+  display:flex; align-items:center; gap:6px; background:var(--surface);
+  border:1px solid var(--line); border-radius:99px; padding:6px 14px;
+  font-family:'JetBrains Mono'; font-weight:700; font-size:15px;
+}
+.streak-pill.hot{border-color:var(--gold); box-shadow:0 0 18px rgba(245,185,63,.18)}
+
+main{padding:0 16px; max-width:560px; margin:0 auto}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px; margin-bottom:14px;
+}
+.card h2{font-family:'Bebas Neue'; font-size:21px; letter-spacing:.05em; margin-bottom:4px}
+.card .sub{color:var(--muted); font-size:13px; margin-bottom:12px}
+.eyebrow{
+  font-family:'JetBrains Mono'; font-size:11px; font-weight:700; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--gold); margin-bottom:6px;
+}
+
+/* ===== HERO HOY ===== */
+.hero{
+  background:linear-gradient(150deg,#1a2024,#12161a 60%);
+  border:1px solid var(--line); border-radius:var(--radius); padding:20px 16px; margin-bottom:14px;
+  position:relative; overflow:hidden;
+}
+.hero::after{
+  content:''; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+  background:radial-gradient(circle,rgba(245,185,63,.12),transparent 70%);
+}
+.hero .day-label{font-family:'JetBrains Mono'; font-size:12px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase}
+.hero h1{font-family:'Bebas Neue'; font-size:42px; line-height:1; margin:6px 0 2px}
+.hero h1 span{color:var(--gold)}
+.hero .phase-line{font-size:13px; color:var(--muted)}
+.hero .phase-line b{color:var(--text)}
+.kpis{display:flex; gap:10px; margin-top:14px}
+.kpi{flex:1; background:rgba(255,255,255,.04); border:1px solid var(--line); border-radius:10px; padding:10px 8px; text-align:center}
+.kpi .v{font-family:'Bebas Neue'; font-size:24px; color:var(--gold)}
+.kpi .l{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+
+/* ===== CHECK LIST ===== */
+.check-item{
+  display:flex; align-items:center; gap:12px; padding:12px 10px;
+  border-bottom:1px solid var(--line); cursor:pointer; user-select:none;
+  transition:opacity .18s;
+}
+.check-item:last-child{border-bottom:none}
+.check-item .box{
+  width:24px; height:24px; min-width:24px; border-radius:7px; border:2px solid var(--muted);
+  display:flex; align-items:center; justify-content:center; font-size:14px; transition:all .15s;
+}
+.check-item.done .box{background:var(--green); border-color:var(--green); color:#04140a}
+.check-item.done .name{text-decoration:line-through; opacity:.45}
+.check-item .info{flex:1}
+.check-item .name{font-weight:600; font-size:14.5px}
+.check-item .detail{font-size:12.5px; color:var(--muted)}
+.check-item .reps{
+  font-family:'JetBrains Mono'; font-size:12.5px; font-weight:700; color:var(--gold);
+  background:rgba(245,185,63,.08); border:1px solid rgba(245,185,63,.25);
+  padding:4px 9px; border-radius:7px; white-space:nowrap;
+}
+.weight-input{
+  width:64px; background:var(--surface2); border:1px solid var(--line); border-radius:7px;
+  color:var(--text); font-family:'JetBrains Mono'; font-size:12.5px; padding:5px 6px; text-align:center;
+}
+.weight-input::placeholder{color:#555e66}
+.weight-input:focus{outline:none; border-color:var(--gold)}
+
+/* ===== PROGRESS BARS ===== */
+.pbar{height:8px; background:var(--surface2); border-radius:99px; overflow:hidden; margin-top:8px}
+.pbar>div{height:100%; background:linear-gradient(90deg,var(--gold),#ffd97a); border-radius:99px; transition:width .35s ease}
+.pbar.green>div{background:linear-gradient(90deg,#2ea043,var(--green))}
+
+/* ===== AGUA ===== */
+.water-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+.glass{
+  width:38px; height:46px; border:2px solid var(--line); border-radius:6px 6px 10px 10px;
+  display:flex; align-items:flex-end; justify-content:center; cursor:pointer;
+  font-size:16px; padding-bottom:4px; transition:all .15s; background:var(--surface2);
+}
+.glass.full{border-color:var(--blue); background:linear-gradient(180deg,transparent 25%,rgba(88,166,255,.35)); }
+
+/* ===== TABS COMIDA ===== */
+.seg{display:flex; background:var(--surface2); border-radius:10px; padding:4px; margin-bottom:10px}
+.seg button{
+  flex:1; background:none; border:none; color:var(--muted); font-family:'Inter'; font-weight:600;
+  font-size:13px; padding:8px; border-radius:8px; cursor:pointer; transition:all .15s;
+}
+.seg button.active{background:var(--gold); color:#1a1206}
+
+/* ===== BOTONES ===== */
+.btn{
+  display:block; width:100%; border:none; border-radius:12px; padding:15px;
+  font-family:'Bebas Neue'; font-size:20px; letter-spacing:.08em; cursor:pointer;
+  transition:transform .12s, box-shadow .2s;
+}
+.btn:active{transform:scale(.98)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#ffce5c); color:#1a1206; box-shadow:0 4px 22px rgba(245,185,63,.25)}
+.btn-ghost{background:var(--surface2); color:var(--muted); border:1px solid var(--line); font-size:16px}
+.btn:disabled{opacity:.45; cursor:default}
+.btn-row{display:flex; gap:10px}
+.btn-row .btn{flex:1}
+
+/* ===== HEATMAP (GitHub style) ===== */
+.heatmap-wrap{overflow-x:auto; padding-bottom:6px}
+.heatmap{display:grid; grid-template-rows:repeat(7,13px); grid-auto-flow:column; grid-auto-columns:13px; gap:3px}
+.hm-cell{width:13px; height:13px; border-radius:3px; background:var(--surface2); border:1px solid rgba(255,255,255,.04)}
+.hm-cell.done{background:var(--green); border-color:transparent}
+.hm-cell.excused{background:#b58a1f; border-color:transparent}
+.hm-cell.failed{background:var(--red); border-color:transparent}
+.hm-cell.today{outline:2px solid var(--gold); outline-offset:1px}
+.hm-cell.future{opacity:.35}
+.legend{display:flex; gap:14px; margin-top:10px; font-size:12px; color:var(--muted); flex-wrap:wrap}
+.legend span{display:flex; align-items:center; gap:5px}
+.dot{width:11px; height:11px; border-radius:3px; display:inline-block}
+
+/* ===== STATS GRID ===== */
+.stats3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px}
+.stat-box{background:var(--surface2); border:1px solid var(--line); border-radius:10px; padding:12px 8px; text-align:center}
+.stat-box .v{font-family:'Bebas Neue'; font-size:28px}
+.stat-box .l{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em}
+.v.gold{color:var(--gold)} .v.green{color:var(--green)} .v.red{color:var(--red)} .v.blue{color:var(--blue)}
+
+/* ===== REGLAS ===== */
+.rule{display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--line); font-size:13.5px; align-items:flex-start}
+.rule:last-child{border:none}
+.rule .n{font-family:'Bebas Neue'; color:var(--gold); font-size:18px; min-width:22px; line-height:1.3}
+
+/* ===== TABLAS ===== */
+table{width:100%; border-collapse:collapse; font-size:13px}
+th{font-family:'JetBrains Mono'; font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); text-align:left; padding:7px 6px; border-bottom:1px solid var(--line)}
+td{padding:8px 6px; border-bottom:1px solid rgba(255,255,255,.05); vertical-align:top}
+tr:last-child td{border:none}
+td b{color:var(--gold)}
+
+/* ===== CHART ===== */
+canvas{width:100%; height:170px}
+
+/* ===== INPUTS ===== */
+.input-row{display:flex; gap:10px; margin-top:10px}
+.input-row input{
+  flex:1; background:var(--surface2); border:1px solid var(--line); border-radius:10px;
+  color:var(--text); font-family:'JetBrains Mono'; font-size:15px; padding:12px; text-align:center;
+}
+.input-row input:focus{outline:none; border-color:var(--gold)}
+.input-row .btn{width:auto; padding:12px 20px; font-size:16px}
+
+/* ===== NAV ===== */
+nav{
+  position:fixed; bottom:0; left:0; right:0; background:rgba(14,17,19,.92);
+  backdrop-filter:blur(14px); border-top:1px solid var(--line); display:flex; z-index:50;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+nav button{
+  flex:1; background:none; border:none; color:var(--muted); padding:10px 4px 12px;
+  font-family:'Inter'; font-size:10.5px; font-weight:600; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:3px; letter-spacing:.03em;
+}
+nav button .ico{font-size:20px; line-height:1}
+nav button.active{color:var(--gold)}
+
+/* ===== MODAL ===== */
+.modal-bg{
+  position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center; z-index:100; padding:20px;
+}
+.modal{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:24px 20px; max-width:420px; width:100%; max-height:85vh; overflow-y:auto}
+.modal h3{font-family:'Bebas Neue'; font-size:26px; letter-spacing:.05em; margin-bottom:8px}
+.modal p{color:var(--muted); font-size:14px; margin-bottom:16px}
+.hidden{display:none !important}
+
+/* ===== BADGE CELEBRACIÓN ===== */
+.medal{
+  text-align:center; padding:10px 0 4px;
+}
+.medal .ico{font-size:56px; display:block; animation:pop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+
+.page{display:none; animation:fadein .25s ease}
+.page.active{display:block}
+@keyframes fadein{from{opacity:0; transform:translateY(6px)}to{opacity:1; transform:none}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none !important; transition:none !important}}
+
+details summary{cursor:pointer; font-weight:600; padding:8px 0; list-style:none; display:flex; justify-content:space-between; align-items:center}
+details summary::after{content:'+'; color:var(--gold); font-size:18px}
+details[open] summary::after{content:'–'}
+.food-list{font-size:13.5px; color:var(--muted); padding:4px 0 10px}
+.food-list li{margin-left:18px; margin-bottom:4px}
+.tag-ok{color:var(--green); font-weight:700}
+.tag-no{color:var(--red); font-weight:700}
+.small-link{background:none;border:none;color:var(--muted);font-size:12px;text-decoration:underline;cursor:pointer;font-family:'Inter'}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">RETO<em>180</em> 🔥</div>
+  <div class="streak-pill" id="streakPill">🔥 <span id="streakNum">0</span></div>
+</header>
+
+<main>
+  <!-- ============ PÁGINA HOY ============ -->
+  <div class="page active" id="page-hoy"></div>
+
+  <!-- ============ PÁGINA RETO ============ -->
+  <div class="page" id="page-reto"></div>
+
+  <!-- ============ PÁGINA PROGRESO ============ -->
+  <div class="page" id="page-progreso"></div>
+
+  <!-- ============ PÁGINA PLAN ============ -->
+  <div class="page" id="page-plan"></div>
+</main>
+
+<nav>
+  <button data-page="hoy" class="active"><span class="ico">⚡</span>HOY</button>
+  <button data-page="reto"><span class="ico">🟩</span>RETO</button>
+  <button data-page="progreso"><span class="ico">📈</span>PROGRESO</button>
+  <button data-page="plan"><span class="ico">📋</span>PLAN</button>
+</nav>
+
+<div class="modal-bg hidden" id="modalBg"><div class="modal" id="modalBox"></div></div>
+
+<script>
+/* ================================================================
+   RETO 180 — Plan de Transformación de 6 meses
+   App creada con Claude · Datos guardados en tu navegador
+================================================================ */
+
+// ---------- DATOS DEL PLAN ----------
+const WORKOUTS = {
+  1: { name:'PECHO + TRÍCEPS', color:'#58A6FF', ex:[
+    ['Press banca plano con barra','4 × 6–8'],
+    ['Press inclinado con mancuernas','4 × 8–10'],
+    ['Aperturas en pec deck o cables','3 × 12–15'],
+    ['Fondos en paralelas','3 × 8–12'],
+    ['Press francés con barra Z','3 × 10–12'],
+    ['Extensión tríceps en polea (cuerda)','3 × 12–15'],
+    ['Abs: crunch en polea alta','3 × 15'],
+  ]},
+  2: { name:'ESPALDA + BÍCEPS', color:'#3FB950', ex:[
+    ['Dominadas (o jalón al pecho)','4 × 6–10'],
+    ['Remo con barra','4 × 8–10'],
+    ['Remo en polea baja (agarre cerrado)','3 × 10–12'],
+    ['Pullover en polea alta','3 × 12–15'],
+    ['Curl con barra','3 × 8–10'],
+    ['Curl martillo con mancuernas','3 × 10–12'],
+    ['Abs: elevación de piernas colgado','3 × 12'],
+  ]},
+  3: { name:'PIERNAS (CUÁDRICEPS)', color:'#E5534B', ex:[
+    ['Sentadilla con barra','4 × 6–8'],
+    ['Prensa de piernas','4 × 10–12'],
+    ['Zancadas caminando con mancuernas','3 × 10 c/pierna'],
+    ['Extensión de cuádriceps','3 × 12–15'],
+    ['Pantorrilla de pie','4 × 12–15'],
+  ]},
+  4: { name:'HOMBROS + ABS', color:'#F5B93F', ex:[
+    ['Press militar (barra o mancuernas)','4 × 6–8'],
+    ['Elevaciones laterales','4 × 12–15'],
+    ['Elevaciones frontales con disco','3 × 12'],
+    ['Pájaros (deltoide posterior)','4 × 12–15'],
+    ['Encogimientos de trapecio','3 × 12'],
+    ['Circuito abs: plancha 45s + bicicleta 20 + elev. piernas 12','3 rondas'],
+  ]},
+  5: { name:'FEMORAL + BRAZOS', color:'#BC8CFF', ex:[
+    ['Peso muerto rumano con barra','4 × 8–10'],
+    ['Curl femoral acostado','4 × 10–12'],
+    ['Hip thrust con barra','3 × 10–12'],
+    ['Press banca con mancuernas (ligero)','3 × 10–12'],
+    ['Curl inclinado con mancuernas','3 × 10–12'],
+    ['Extensión tríceps sobre cabeza','3 × 12–15'],
+    ['Pantorrilla sentado','4 × 15'],
+  ]},
+  6: { name:'DESCANSO ACTIVO', color:'#8B949E', ex:[
+    ['Caminar 8,000–10,000 pasos','todo el día'],
+    ['Estiramiento / movilidad','15–20 min'],
+  ]},
+  0: { name:'DESCANSO ACTIVO', color:'#8B949E', ex:[
+    ['Caminar 8,000–10,000 pasos','todo el día'],
+    ['Preparar comidas de la semana (meal prep)','domingo 🔑'],
+  ]},
+};
+const CARDIO = { 1:'20–25 min caminata inclinada (incline 10–12)', 2:'20–25 min caminata inclinada', 3:null, 4:'20–25 min caminata inclinada', 5:'20–25 min caminata inclinada' };
+
+const MEALS = {
+  A: [
+    ['Desayuno','4 claras + 2 huevos revueltos · ½ taza avena con canela y guineo · café negro','500 kcal · 35g prot'],
+    ['Almuerzo','200g pechuga a la plancha · 1 taza arroz · ½ taza habichuelas · ensalada + 1 cdta aceite oliva','700 kcal · 55g prot'],
+    ['Pre-entreno','1 guineo + 1 scoop whey (o 150g pollo)','300 kcal · 28g prot'],
+    ['Cena','200g res magra o pescado · 1 plátano hervido o 200g batata · vegetales','600 kcal · 50g prot'],
+    ['Antes de dormir','1 taza yogur griego natural o 3 claras','150 kcal · 18g prot'],
+  ],
+  B: [
+    ['Desayuno','Mangú de 1 plátano verde + 3 huevos hervidos + cebollita (sin frito)','520 kcal · 30g prot'],
+    ['Almuerzo','220g pollo guisado (poca grasa) · 1 taza moro · ¼ aguacate','720 kcal · 55g prot'],
+    ['Pre-entreno','Batida: ½ taza avena + guineo + whey','350 kcal · 30g prot'],
+    ['Cena','200g pescado al horno · 150g yuca hervida · ensalada','550 kcal · 45g prot'],
+    ['Antes de dormir','Yogur griego o 3 claras','150 kcal · 18g prot'],
+  ],
+};
+
+const PHASES = [
+  { m:[1,2], name:'FASE 1 · ARRANQUE', kcal:2250, note:'Técnica perfecta y crear el hábito. Sube pesos cada semana.' },
+  { m:[3,4], name:'FASE 2 · QUEMA', kcal:2150, note:'El cuerpo se adaptó: bajamos 100 kcal. Cardio firme 4 días.' },
+  { m:[5,6], name:'FASE 3 · DEFINICIÓN', kcal:2100, note:'Refeed sabatino: sube carbos a 300g el sábado. Cardio 5×30 min.' },
+];
+const MACROS = { prot:185, fat:70 };
+const CARBS_BY_PHASE = [220, 195, 185];
+
+const RULES = [
+  'No faltar NI UN DÍA al gym (salvo salud o compromiso serio — se marca como justificado).',
+  'Proteína en cada comida: 185g diarios. Si fallas en todo, no falles en esto.',
+  'Cero frituras, cero refrescos, cero dulces. 1 comida libre por semana (no un día entero).',
+  'Dormir 7–8 horas. Sin sueño no hay músculo.',
+  '3–4 litros de agua al día.',
+  'Anotar los pesos de cada ejercicio. Sin progresión no hay crecimiento.',
+  'Foto de progreso cada 14 días: misma pose, misma luz, en ayunas.',
+];
+
+const TOTAL_DAYS = 180;
+
+// ---------- ESTADO ----------
+let S = null;
+const K = 'reto180_v1';
+function loadState(){
+  try{ const raw = localStorage.getItem(K); if(raw) return JSON.parse(raw); }catch(e){}
+  return null;
+}
+function save(){
+  try{ localStorage.setItem(K, JSON.stringify(S)); }catch(e){ console.warn('No se pudo guardar', e); }
+}
+function freshDay(){ return { status:null, ex:{}, exW:{}, meals:{}, mealType:'A', water:0, cardio:false }; }
+
+function todayKey(d = new Date()){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function parseKey(k){ const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
+function dayNumber(k = todayKey()){
+  const diff = Math.floor((parseKey(k) - parseKey(S.start)) / 86400000) + 1;
+  return diff;
+}
+function currentMonth(){ return Math.min(6, Math.max(1, Math.ceil(dayNumber()/30))); }
+function currentPhase(){ const m = currentMonth(); return PHASES.findIndex(p=>p.m.includes(m)); }
+function getDay(k = todayKey()){
+  if(!S.days[k]) S.days[k] = freshDay();
+  return S.days[k];
+}
+
+// ---------- RACHA ----------
+function computeStreak(){
+  let streak = 0;
+  const t = new Date();
+  for(let i=0;;i++){
+    const d = new Date(t); d.setDate(t.getDate()-i);
+    const k = todayKey(d);
+    if(parseKey(k) < parseKey(S.start)) break;
+    const rec = S.days[k];
+    if(i===0 && (!rec || !rec.status)) continue; // hoy aún abierto no rompe racha
+    if(rec && (rec.status==='done' || rec.status==='excused')){ if(rec.status==='done') streak++; else continue; }
+    else break;
+  }
+  return streak;
+}
+function stats(){
+  let done=0, excused=0, failed=0;
+  for(const k in S.days){
+    const s = S.days[k].status;
+    if(s==='done') done++; else if(s==='excused') excused++; else if(s==='failed') failed++;
+  }
+  return {done, excused, failed};
+}
+
+// ---------- RENDER: HOY ----------
+const DIAS = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
+function renderHoy(){
+  const k = todayKey();
+  const day = getDay(k);
+  const dn = dayNumber();
+  const dow = new Date().getDay();
+  const w = WORKOUTS[dow];
+  const ph = PHASES[currentPhase()];
+  const isGymDay = dow>=1 && dow<=5;
+  const exDone = w.ex.filter((_,i)=>day.ex[i]).length;
+  const mealsDone = MEALS[day.mealType].filter((_,i)=>day.meals[i]).length;
+  const closed = !!day.status;
+
+  let html = `
+  <div class="hero">
+    <div class="day-label">${DIAS[dow]} · DÍA ${Math.max(1,dn)} DE ${TOTAL_DAYS}</div>
+    <h1>${w.name.replace('+','<span>+</span>')}</h1>
+    <div class="phase-line"><b>${ph.name}</b> · ${ph.kcal} kcal · ${MACROS.prot}g proteína</div>
+    <div class="kpis">
+      <div class="kpi"><div class="v">${exDone}/${w.ex.length}</div><div class="l">Ejercicios</div></div>
+      <div class="kpi"><div class="v">${mealsDone}/5</div><div class="l">Comidas</div></div>
+      <div class="kpi"><div class="v">${day.water}/12</div><div class="l">Vasos agua</div></div>
+    </div>
+    <div class="pbar"><div style="width:${Math.round(dn/TOTAL_DAYS*100)}%"></div></div>
+    <div style="font-size:11.5px;color:var(--muted);margin-top:5px">${Math.round(dn/TOTAL_DAYS*100)}% del reto completado</div>
+  </div>`;
+
+  // Entrenamiento
+  html += `<div class="card"><div class="eyebrow">ENTRENAMIENTO</div><h2 style="color:${w.color}">${w.name}</h2>
+  <div class="sub">Descansa 2–3 min en básicos, 60–90 seg en aislamiento. Anota el peso usado.</div>`;
+  w.ex.forEach((e,i)=>{
+    const isDone = !!day.ex[i];
+    html += `<div class="check-item ${isDone?'done':''}" onclick="toggleEx(${i},event)">
+      <div class="box">${isDone?'✓':''}</div>
+      <div class="info"><div class="name">${e[0]}</div></div>
+      ${isGymDay?`<input class="weight-input" placeholder="lb" value="${day.exW[i]||''}" onclick="event.stopPropagation()" onchange="setExW(${i},this.value)">`:''}
+      <div class="reps">${e[1]}</div>
+    </div>`;
+  });
+  if(CARDIO[dow]){
+    html += `<div class="check-item ${day.cardio?'done':''}" onclick="toggleCardio()">
+      <div class="box">${day.cardio?'✓':''}</div>
+      <div class="info"><div class="name">Cardio final 🏃</div><div class="detail">${CARDIO[dow]}</div></div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // Comidas
+  html += `<div class="card"><div class="eyebrow">NUTRICIÓN · ${ph.kcal} KCAL</div><h2>Comidas de hoy</h2>
+  <div class="seg">
+    <button class="${day.mealType==='A'?'active':''}" onclick="setMealType('A')">DÍA A</button>
+    <button class="${day.mealType==='B'?'active':''}" onclick="setMealType('B')">DÍA B</button>
+  </div>`;
+  MEALS[day.mealType].forEach((m,i)=>{
+    const isDone = !!day.meals[i];
+    html += `<div class="check-item ${isDone?'done':''}" onclick="toggleMeal(${i})">
+      <div class="box">${isDone?'✓':''}</div>
+      <div class="info"><div class="name">${m[0]}</div><div class="detail">${m[1]}</div></div>
+      <div class="reps" style="font-size:10.5px">${m[2]}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Agua
+  html += `<div class="card"><div class="eyebrow">HIDRATACIÓN</div><h2>Agua · meta 3 litros (12 vasos)</h2><div class="water-row">`;
+  for(let i=0;i<12;i++) html += `<div class="glass ${i<day.water?'full':''}" onclick="setWater(${i})">${i<day.water?'💧':''}</div>`;
+  html += `</div></div>`;
+
+  // Cerrar día
+  if(!closed){
+    html += `<div class="card" style="border-color:var(--gold-dim)">
+      <div class="eyebrow">CIERRE DEL DÍA</div>
+      <h2>¿Cumpliste hoy?</h2>
+      <div class="sub">Cierra el día para sellar tu commit en la racha. Sé honesto: el espejo no se engaña.</div>
+      <button class="btn btn-gold" onclick="closeDay('done')">✅ CUMPLÍ — SELLAR EL DÍA</button>
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-ghost" onclick="closeDay('excused')">🩺 Justificado</button>
+        <button class="btn btn-ghost" onclick="closeDay('failed')">❌ Fallé</button>
+      </div>
+    </div>`;
+  } else {
+    const map = {done:['✅','DÍA SELLADO','Commit registrado. La racha sigue viva.'], excused:['🩺','FALTA JUSTIFICADA','Salud o compromiso: no rompe la racha, pero no suma.'], failed:['❌','DÍA FALLIDO','Mañana se recupera. Un tropiezo no es el final.']};
+    const m = map[day.status];
+    html += `<div class="card" style="text-align:center">
+      <div style="font-size:40px">${m[0]}</div>
+      <h2>${m[1]}</h2><div class="sub">${m[2]}</div>
+      <button class="small-link" onclick="reopenDay()">Reabrir el día</button>
+    </div>`;
+  }
+  document.getElementById('page-hoy').innerHTML = html;
+  updateStreakPill();
+}
+
+// ---------- RENDER: RETO (heatmap) ----------
+function renderReto(){
+  const st = stats();
+  const streak = computeStreak();
+  const dn = Math.max(1, dayNumber());
+  let cells = '';
+  const start = parseKey(S.start);
+  // padding para alinear al día de la semana (columnas = semanas, filas = días)
+  const startDow = start.getDay();
+  for(let i=0;i<startDow;i++) cells += `<div class="hm-cell" style="visibility:hidden"></div>`;
+  const tk = todayKey();
+  for(let i=0;i<TOTAL_DAYS;i++){
+    const d = new Date(start); d.setDate(start.getDate()+i);
+    const k = todayKey(d);
+    const rec = S.days[k];
+    let cls = '';
+    if(rec && rec.status) cls = rec.status==='done'?'done':(rec.status==='excused'?'excused':'failed');
+    if(k===tk) cls += ' today';
+    if(parseKey(k) > parseKey(tk)) cls += ' future';
+    cells += `<div class="hm-cell ${cls}" title="Día ${i+1} · ${k}"></div>`;
+  }
+  const pct = Math.round(st.done/dn*100);
+
+  let html = `
+  <div class="card" style="text-align:center; background:linear-gradient(160deg,#1a2024,#12161a)">
+    <div class="eyebrow">TU RACHA</div>
+    <div class="bebas" style="font-size:76px; line-height:1; color:var(--gold)">🔥 ${streak}</div>
+    <div class="sub" style="margin:0">días seguidos cumpliendo</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">COMMITS DE DISCIPLINA</div>
+    <h2>Tu grid de 180 días</h2>
+    <div class="sub">Como un contribution graph de GitHub — pero aquí los commits son sudor. Llénalo de verde.</div>
+    <div class="heatmap-wrap"><div class="heatmap">${cells}</div></div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--green)"></span>Cumplido</span>
+      <span><span class="dot" style="background:#b58a1f"></span>Justificado</span>
+      <span><span class="dot" style="background:var(--red)"></span>Fallado</span>
+      <span><span class="dot" style="background:var(--surface2)"></span>Pendiente</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">ESTADÍSTICAS DEL RETO</div>
+    <div class="stats3">
+      <div class="stat-box"><div class="v green">${st.done}</div><div class="l">Cumplidos</div></div>
+      <div class="stat-box"><div class="v gold">${st.excused}</div><div class="l">Justificados</div></div>
+      <div class="stat-box"><div class="v red">${st.failed}</div><div class="l">Fallados</div></div>
+    </div>
+    <div style="margin-top:14px; font-size:13px; color:var(--muted)">Tasa de cumplimiento</div>
+    <div class="pbar green"><div style="width:${pct}%"></div></div>
+    <div class="mono" style="font-size:13px; margin-top:5px; color:var(--green)">${pct}%</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">EL CONTRATO</div>
+    <h2>Reglas innegociables</h2>
+    ${RULES.map((r,i)=>`<div class="rule"><div class="n">${String(i+1).padStart(2,'0')}</div><div>${r}</div></div>`).join('')}
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">DATOS</div>
+    <h2>Respaldo</h2>
+    <div class="sub">Tus datos viven en este navegador. Exporta un respaldo de vez en cuando.</div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="exportData()">⬇ Exportar</button>
+      <button class="btn btn-ghost" onclick="importData()">⬆ Importar</button>
+    </div>
+  </div>`;
+  document.getElementById('page-reto').innerHTML = html;
+}
+
+// ---------- RENDER: PROGRESO ----------
+function renderProgreso(){
+  const ws = S.weights;
+  const last = ws.length ? ws[ws.length-1].kg : null;
+  const first = ws.length ? ws[0].kg : null;
+  const lost = (first && last) ? (first-last).toFixed(1) : '0.0';
+  const dn = dayNumber();
+  const nextPhotoIn = 14 - ((Math.max(1,dn)-1) % 14);
+
+  let html = `
+  <div class="card">
+    <div class="eyebrow">PESO CORPORAL</div>
+    <h2>Registro semanal</h2>
+    <div class="sub">Pésate 3 veces/semana en ayunas y anota el promedio. Meta: −0.5 a −0.8 kg/semana.</div>
+    <div class="stats3">
+      <div class="stat-box"><div class="v blue">${first??'—'}</div><div class="l">Inicial kg</div></div>
+      <div class="stat-box"><div class="v gold">${last??'—'}</div><div class="l">Actual kg</div></div>
+      <div class="stat-box"><div class="v green">−${lost}</div><div class="l">Perdido kg</div></div>
+    </div>
+    <div class="input-row">
+      <input type="number" step="0.1" id="wInput" placeholder="Peso de hoy (kg)">
+      <button class="btn btn-gold" onclick="addWeight()">＋</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">GRÁFICA</div>
+    <h2>Tu curva de transformación</h2>
+    <canvas id="chart" width="600" height="340"></canvas>
+    ${ws.length===0?'<div class="sub" style="text-align:center;padding:20px 0">Registra tu primer peso para empezar la curva 📉</div>':''}
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">FOTO DE PROGRESO</div>
+    <h2>📸 Próxima foto en ${nextPhotoIn} día${nextPhotoIn===1?'':'s'}</h2>
+    <div class="sub">Cada 14 días: misma pose, misma luz, en ayunas. La pesa miente — la foto no.</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">RUTA DE 6 MESES</div>
+    <h2>Cronograma</h2>
+    <table>
+      <tr><th>Mes</th><th>Enfoque</th><th>Meta</th></tr>
+      <tr><td><b>1</b></td><td>Técnica + hábito, forma perfecta</td><td>96→93 kg</td></tr>
+      <tr><td><b>2</b></td><td>Subir pesos cada semana</td><td>93→90.5</td></tr>
+      <tr><td><b>3</b></td><td>Déficit 2,150 · cardio firme</td><td>90.5→88</td></tr>
+      <tr><td><b>4</b></td><td>Cargas máximas con buena forma</td><td>88→86</td></tr>
+      <tr><td><b>5</b></td><td>Déficit 2,100 + refeed sabatino</td><td>86→85</td></tr>
+      <tr><td><b>6</b></td><td>Definición final · cardio 5×30</td><td>85→84 📸</td></tr>
+    </table>
+  </div>`;
+  document.getElementById('page-progreso').innerHTML = html;
+  if(ws.length) drawChart();
+}
+
+function drawChart(){
+  const c = document.getElementById('chart'); if(!c) return;
+  const ctx = c.getContext('2d');
+  const ws = S.weights;
+  ctx.clearRect(0,0,c.width,c.height);
+  const pad = 42, W = c.width, H = c.height;
+  const vals = ws.map(w=>w.kg);
+  const min = Math.min(...vals, 84)-1, max = Math.max(...vals, 96)+1;
+  const x = i => ws.length===1 ? W/2 : pad + i*(W-pad*1.4)/(ws.length-1);
+  const y = v => H-pad - (v-min)/(max-min)*(H-pad*1.8);
+  // grid
+  ctx.strokeStyle='rgba(255,255,255,.06)'; ctx.lineWidth=1;
+  ctx.fillStyle='#8B949E'; ctx.font='20px JetBrains Mono';
+  for(let g=0; g<=4; g++){
+    const gv = min + (max-min)*g/4, gy = y(gv);
+    ctx.beginPath(); ctx.moveTo(pad,gy); ctx.lineTo(W-10,gy); ctx.stroke();
+    ctx.fillText(gv.toFixed(1), 2, gy+6);
+  }
+  // meta line 84
+  const my = y(84);
+  ctx.strokeStyle='rgba(63,185,80,.5)'; ctx.setLineDash([6,6]);
+  ctx.beginPath(); ctx.moveTo(pad,my); ctx.lineTo(W-10,my); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#3FB950'; ctx.fillText('META 84', W-130, my-8);
+  // line
+  ctx.strokeStyle='#F5B93F'; ctx.lineWidth=3; ctx.beginPath();
+  ws.forEach((w,i)=>{ i===0?ctx.moveTo(x(i),y(w.kg)):ctx.lineTo(x(i),y(w.kg)); });
+  ctx.stroke();
+  ws.forEach((w,i)=>{
+    ctx.fillStyle='#F5B93F'; ctx.beginPath(); ctx.arc(x(i),y(w.kg),5,0,7); ctx.fill();
+    ctx.strokeStyle='#0E1113'; ctx.lineWidth=2; ctx.stroke();
+  });
+}
+
+// ---------- RENDER: PLAN ----------
+function renderPlan(){
+  const ph = PHASES[currentPhase()];
+  const carbs = CARBS_BY_PHASE[currentPhase()];
+  let html = `
+  <div class="card">
+    <div class="eyebrow">TUS NÚMEROS AHORA MISMO</div>
+    <h2>${ph.name}</h2>
+    <div class="sub">${ph.note}</div>
+    <div class="stats3">
+      <div class="stat-box"><div class="v gold">${ph.kcal}</div><div class="l">kcal/día</div></div>
+      <div class="stat-box"><div class="v blue">${MACROS.prot}g</div><div class="l">Proteína</div></div>
+      <div class="stat-box"><div class="v green">${carbs}g</div><div class="l">Carbos</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:13px;color:var(--muted)">Grasas: ${MACROS.fat}g · Agua: 3–4 L · Base: 96 kg, 1.75 m — TDEE ~2,900 kcal, déficit 22%</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">SEMANA COMPLETA</div>
+    <h2>Rutina de entrenamiento</h2>`;
+  [1,2,3,4,5,6].forEach(d=>{
+    const w = WORKOUTS[d];
+    html += `<details><summary><span style="color:${w.color}">● </span>${DIAS[d]} — ${w.name}</summary>
+    <table>${w.ex.map(e=>`<tr><td>${e[0]}</td><td style="white-space:nowrap"><b>${e[1]}</b></td></tr>`).join('')}</table>
+    ${CARDIO[d]?`<div style="font-size:12.5px;color:var(--muted);padding:8px 0">🏃 + ${CARDIO[d]}</div>`:''}
+    </details>`;
+  });
+  html += `<details><summary><span style="color:#8B949E">● </span>DOMINGO — DESCANSO + MEAL PREP</summary>
+  <div class="food-list">Camina 8–10 mil pasos y cocina las proteínas y carbos de lunes a miércoles. El meal prep del domingo es el 50% del éxito de la semana.</div></details>
+  <div class="sub" style="margin-top:10px">Progresión: al completar el rango alto de reps en todas las series → sube 2.5–5 lb la próxima semana.</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">NUTRICIÓN</div>
+    <h2>Alimentos ✅ / ❌</h2>
+    <table>
+      <tr><th class="tag-ok">Come</th><th class="tag-no">Elimina</th></tr>
+      <tr><td>Pollo, res magra, pescado, huevos, atún</td><td>Frituras (salami, queso frito, pica pollo)</td></tr>
+      <tr><td>Arroz, plátano, yuca, batata, avena, guineo</td><td>Refrescos y jugos con azúcar</td></tr>
+      <tr><td>Habichuelas, lentejas, guandules</td><td>Pan dulce, dulces, galletas</td></tr>
+      <tr><td>Aguacate (porción), aceite de oliva</td><td>Alcohol (máx 1–2 tragos ocasionales)</td></tr>
+      <tr><td>Yogur griego, whey protein</td><td>Salsas cremosas, mayonesa</td></tr>
+    </table>
+    <div class="sub" style="margin-top:10px">Si comes fuera: pollo a la plancha, ensalada y máximo 5 tostones. Sazona con limón, orégano y ajo.</div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">SUPLEMENTOS</div>
+    <h2>Solo lo que funciona</h2>
+    <div class="rule"><div class="n">01</div><div><b>Creatina monohidratada</b> — 5g todos los días, entrene o no. El suplemento más probado que existe.</div></div>
+    <div class="rule"><div class="n">02</div><div><b>Whey protein</b> — 1–2 scoops/día para llegar a 185g de proteína.</div></div>
+    <div class="rule"><div class="n">03</div><div><b>Cafeína</b> — café negro pre-entreno funciona igual que cualquier pre-workout.</div></div>
+  </div>
+
+  <div class="card" style="border-color:var(--gold-dim)">
+    <div class="eyebrow">RECUERDA</div>
+    <h2>En 6 meses el espejo te lo paga 🔥</h2>
+    <div class="sub">Este plan es una guía general. Si tienes alguna condición de salud, consúltalo con tu médico.</div>
+  </div>`;
+  document.getElementById('page-plan').innerHTML = html;
+}
+
+// ---------- ACCIONES ----------
+function toggleEx(i,ev){ if(ev.target.tagName==='INPUT')return; const d=getDay(); d.ex[i]=!d.ex[i]; save(); renderHoy(); }
+function setExW(i,v){ const d=getDay(); d.exW[i]=v; save(); }
+function toggleMeal(i){ const d=getDay(); d.meals[i]=!d.meals[i]; save(); renderHoy(); }
+function toggleCardio(){ const d=getDay(); d.cardio=!d.cardio; save(); renderHoy(); }
+function setMealType(t){ const d=getDay(); d.mealType=t; save(); renderHoy(); }
+function setWater(i){ const d=getDay(); d.water = (d.water===i+1)? i : i+1; save(); renderHoy(); }
+
+function closeDay(status){
+  const d = getDay();
+  d.status = status; save();
+  if(status==='done'){
+    const streak = computeStreak();
+    let msg = '¡Día sellado! Otro commit verde en tu historia.';
+    if(streak>0 && streak%7===0) msg = `¡${streak} DÍAS SEGUIDOS! Una semana más de acero. 🏆`;
+    if(streak>0 && streak%30===0) msg = `🏅 ¡${streak} DÍAS! Un mes completo de disciplina pura. Estás en otro nivel.`;
+    showModal(`<div class="medal"><span class="ico">🔥</span></div>
+      <h3 style="text-align:center">RACHA: ${streak}</h3>
+      <p style="text-align:center">${msg}</p>
+      <button class="btn btn-gold" onclick="hideModal()">SEGUIMOS 💪</button>`);
+  }
+  renderHoy(); renderReto();
+}
+function reopenDay(){ getDay().status = null; save(); renderHoy(); renderReto(); }
+
+function addWeight(){
+  const v = parseFloat(document.getElementById('wInput').value);
+  if(!v || v<40 || v>250) return;
+  S.weights.push({date: todayKey(), kg: v});
+  save(); renderProgreso();
+}
+
+function exportData(){
+  const blob = new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'reto180-respaldo-'+todayKey()+'.json';
+  a.click();
+}
+function importData(){
+  const inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
+  inp.onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => { try{ S = JSON.parse(r.result); save(); renderAll(); }catch(err){ alert('Archivo inválido'); } };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+
+// ---------- MODAL ----------
+function showModal(html){
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('modalBg').classList.remove('hidden');
+}
+function hideModal(){ document.getElementById('modalBg').classList.add('hidden'); }
+
+// ---------- NAV ----------
+document.querySelectorAll('nav button').forEach(b=>{
+  b.onclick = () => {
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+b.dataset.page).classList.add('active');
+    renderAll();
+    window.scrollTo({top:0});
+  };
+});
+
+function updateStreakPill(){
+  const s = computeStreak();
+  document.getElementById('streakNum').textContent = s;
+  document.getElementById('streakPill').classList.toggle('hot', s>=3);
+}
+
+function renderAll(){ renderHoy(); renderReto(); renderProgreso(); renderPlan(); }
+
+// ---------- ONBOARDING ----------
+function init(){
+  S = loadState();
+  if(!S){
+    showModal(`
+      <div class="medal"><span class="ico">🔥</span></div>
+      <h3 style="text-align:center">RETO 180</h3>
+      <p style="text-align:center">180 días. Una meta. Cero excusas.<br>Tu transformación empieza <b style="color:var(--gold)">HOY</b>.</p>
+      <p style="font-size:13px">Peso inicial (kg) — opcional:</p>
+      <div class="input-row" style="margin-bottom:14px">
+        <input type="number" step="0.1" id="startW" placeholder="96.0">
+      </div>
+      <button class="btn btn-gold" onclick="startChallenge()">🚀 EMPEZAR EL RETO</button>`);
+    return;
+  }
+  renderAll();
+}
+function startChallenge(){
+  S = { start: todayKey(), days:{}, weights:[] };
+  const w = parseFloat(document.getElementById('startW').value);
+  if(w && w>40 && w<250) S.weights.push({date: todayKey(), kg:w});
+  save(); hideModal(); renderAll();
+}
+init();
+</script>
+</body>
+</html>
